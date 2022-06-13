@@ -2,6 +2,7 @@ from flask_restful import reqparse, Resource
 import werkzeug
 import cv2
 import numpy as np
+import src.services.calculate as calculate
 
 parser = reqparse.RequestParser()
 parser.add_argument('file',
@@ -16,6 +17,8 @@ class Calculator(Resource):
         stream = args['file'].read()
         npimg = np.fromstring(stream, np.uint8)
         img = cv2.imdecode(npimg, cv2.IMREAD_UNCHANGED)
+        img = np.invert(np.array([img]))
         # cv2.imwrite("saved_file.jpg", img)
-        response = { 'success': True}
+        result = calculate(img)
+        response = { result }
         return response
